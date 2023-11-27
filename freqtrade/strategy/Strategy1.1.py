@@ -1,9 +1,10 @@
 from freqtrade.strategy.interface import IStrategy
 from pandas import DataFrame
+import talib.abstract as ta
 
 class CustomStrategy(IStrategy):
     """
-    Custom Strategy for Freqtrade.
+    Custom Strategy for Freqtrade, integrating RSI and MACD indicators.
     """
 
     # Minimal ROI designed for the strategy.
@@ -20,38 +21,45 @@ class CustomStrategy(IStrategy):
     trailing_stop_positive_offset = 0.02
     trailing_only_offset_is_reached = False
 
+    # RSI and MACD settings
+    rsi_buy = 30  # RSI value below which to buy
+    rsi_sell = 70  # RSI value above which to sell
+
     # Consecutive losses and last trade profit
     consecutive_losses = 0
     last_trade_profit = 0
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Add any indicators here. This method will be called once per run.
+        Add necessary indicators: RSI and MACD
         """
-        # Example: Add Simple Moving Average (SMA) indicator
-        dataframe['sma'] = dataframe['close'].rolling(window=7).mean()
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
+        macd = ta.MACD(dataframe)
+        dataframe['macd'] = macd['macd']
+        dataframe['macdsignal'] = macd['macdsignal']
+
         return dataframe
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Based on the indicators, define your buy strategy.
+        Define the buy signal based on RSI and MACD.
         """
         dataframe.loc[
             (
-                # Example condition: Buy when the close is greater than SMA
-                (dataframe['close'] > dataframe['sma'])
+                (dataframe['rsi'] < self.rsi_buy) &
+                (dataframe['macd'] > dataframe['macdsignal'])
             ),
             'buy'] = 1
         return dataframe
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Based on the indicators, define your sell strategy.
+        Define the sell signal based on RSI and MACD.
         """
         dataframe.loc[
             (
-                # Example condition: Sell when the close is less than SMA
-                (dataframe['close'] < dataframe['sma'])
+                (dataframe['rsi'] > self.rsi_sell) &
+                (dataframe['macd'] < dataframe['macdsignal'])
             ),
             'sell'] = 1
         return dataframe
