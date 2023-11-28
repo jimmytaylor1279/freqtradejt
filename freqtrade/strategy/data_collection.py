@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import os
 
 def fetch_data(pair, since):
     url = f'https://api.kraken.com/0/public/OHLC?pair={pair}&since={since}&interval=1'
@@ -13,3 +14,6 @@ pair = 'XXBTZUSD'  # Bitcoin to USD pair
 since = '1609459200'  # Unix timestamp (e.g., January 1, 2021)
 df = fetch_data(pair, since)
 df.to_csv('historical_data.csv', index=False)
+
+
+print("Current Working Directory:", os.getcwd())
