@@ -1,27 +1,27 @@
 from freqtrade.strategy.interface import IStrategy
 from pandas import DataFrame
+from freqtrade.persistence import Trade
+from freqtrade.wallets import Wallets
+
 # Import your custom modules
 from .model import predict_market
 from .preprocessing import prepare_data
 
 class MLStrategy(IStrategy):
     """
-    Machine Learning based Trading Strategy.
+    Machine Learning based Trading Strategy with dynamic stake amount.
     """
 
+    def __init__(self):
+        self.last_trade_profit = 0
+        self.consecutive_losses = 0
+
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Add any technical indicators or other calculations here.
-        This method will prepare the data for the machine learning model.
-        """
         # Preprocess the data
         dataframe = prepare_data(dataframe)
         return dataframe
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Based on the model's prediction, determine whether to place a buy order.
-        """
         dataframe.loc[
             (
                 # Call the model prediction function for buy
@@ -31,9 +31,6 @@ class MLStrategy(IStrategy):
         return dataframe
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        """
-        Based on the model's prediction, determine whether to place a sell order.
-        """
         dataframe.loc[
             (
                 # Call the model prediction function for sell
@@ -42,6 +39,28 @@ class MLStrategy(IStrategy):
             'sell'] = 1
         return dataframe
 
-    # You can add more methods if needed, such as stop loss, ROI, etc.
+    def stake_amount(self, pair: str, **kwargs) -> float:
+        balance = self.wallets.get_free_balance(currency=self.config['stake_currency'])
+        base_stake = balance * 0.05  # 5% of account balance
+
+        if self.last_trade_profit > 0 or self.consecutive_losses >= 3:
+            self.consecutive_losses = 0
+            return base_stake
+        else:
+            loss_stake = base_stake * (2 ** self.consecutive_losses)
+            self.consecutive_losses += 1
+            return min(loss_stake, balance)
+
+    def check_sell(self, pair: str, trade: Trade, order_type: str, amount: float, rate: float, time_in_force: str, sell_reason: str, **kwargs) -> bool:
+        # Update trade outcome
+        if trade and trade.close_profit:
+            self.last_trade_profit = trade.close_profit
+        else:
+            self.last_trade_profit = 0
+
+        # Implement your sell logic
+        # ...
+
+        return True  # or your custom sell logic
 
 # Add any additional helper functions or classes here if needed
