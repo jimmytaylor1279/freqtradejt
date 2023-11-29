@@ -4,8 +4,8 @@ from freqtrade.persistence import Trade
 from freqtrade.wallets import Wallets
 
 # Import your custom modules
-from .model import predict_market
-from .preprocessing import prepare_data
+from model import predict_market
+from preprocessing import prepare_data
 
 class MLStrategy(IStrategy):
     """
