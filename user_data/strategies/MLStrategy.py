@@ -12,7 +12,19 @@ class MLStrategy(IStrategy):
     Machine Learning based Trading Strategy with dynamic stake amount.
     """
 
-    def __init__(self):
+    # Define the stoploss for the strategy
+    stoploss = -0.10  # Adjust this value as per your risk preference
+
+    # Define minimal ROI for the strategy
+    minimal_roi = {
+        "0": 0.05  # Adjust this value as per your strategy
+    }
+
+    # Define any other strategy parameters here
+    # ...
+
+    def __init__(self, config: dict):
+        super().__init__(config)
         self.last_trade_profit = 0
         self.consecutive_losses = 0
 
