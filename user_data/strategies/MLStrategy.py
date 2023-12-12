@@ -2,6 +2,7 @@ from freqtrade.strategy.interface import IStrategy
 from pandas import DataFrame
 from freqtrade.persistence import Trade
 from freqtrade.wallets import Wallets
+from model import predict_market
 
 # Import your custom modules
 from model import predict_market
@@ -69,10 +70,15 @@ class MLStrategy(IStrategy):
             self.last_trade_profit = trade.close_profit
         else:
             self.last_trade_profit = 0
+  
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        buy_signals = predict_market(dataframe, 'buy')
+        dataframe.loc[buy_signals, 'buy'] = 1
+        return dataframe
 
-        # Implement your sell logic
-        # ...
-
-        return True  # or your custom sell logic
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        sell_signals = predict_market(dataframe, 'sell')
+        dataframe.loc[sell_signals, 'sell'] = 1
+        return dataframe
 
 # Add any additional helper functions or classes here if needed

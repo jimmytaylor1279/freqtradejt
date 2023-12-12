@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 import joblib
 
 def create_target(df, n=1):
@@ -9,28 +11,31 @@ def create_target(df, n=1):
     :param n: Number of periods to look ahead for price increase.
     :return: DataFrame with a new 'target' column.
     """
-    # Shift the closing price by -n periods
     df['future_close'] = df['close'].shift(-n)
-
-    # If future close is higher than current close, label as 1, else 0
     df['target'] = (df['future_close'] > df['close']).astype(int)
-
-    # Drop the last n rows which will have NaN values for 'future_close'
-    df = df[:-n]
+    df = df[:-n]  # Drop the last n rows with NaN values
     return df
 
 def train_model(df):
-    # Apply the target creation function
-    df = create_target(df, n=1)  # Adjust 'n' as needed for your strategy
+    df = create_target(df, n=1)  # Adjust 'n' as needed
 
     # Define your features and target variable
-    # Replace these feature names with the actual names from your dataset
-    X = df[['open', 'high', 'low', 'close', 'volume']]
+    # Update feature list based on the indicators you have added
+    feature_columns = ['open', 'high', 'low', 'close', 'volume', 'sma', 'ema', 'rsi', 'macd', 'macdsignal', 'macdhist', 'upperband', 'middleband', 'lowerband']
+    X = df[feature_columns]
     y = df['target']
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Initialize and train the model
     model = RandomForestClassifier()
-    model.fit(X, y)
+    model.fit(X_train, y_train)
+
+    # Evaluate the model
+    predictions = model.predict(X_test)
+    print(classification_report(y_test, predictions))
+
     return model
 
 # Load your dataset
