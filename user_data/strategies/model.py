@@ -3,7 +3,7 @@ import numpy as np
 
 def load_model():
     # Load the pre-trained model
-    return joblib.load(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\trading_model.pkl')
+    return joblib.load(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\data\kraken\trading_model.pkl')
 
 def predict_market(dataframe, action_type):
     model = load_model()
