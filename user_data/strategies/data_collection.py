@@ -13,7 +13,7 @@ def fetch_data(pair, since):
 pair = 'XXBTZUSD'  # Bitcoin to USD pair
 since = '1609459200'  # Unix timestamp (e.g., January 1, 2021)
 df = fetch_data(pair, since)
-df.to_csv('A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\historical_data.csv', index=False)
+df.to_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\historical_data.csv', index=False)
 
 
 print("Current Working Directory:", os.getcwd())

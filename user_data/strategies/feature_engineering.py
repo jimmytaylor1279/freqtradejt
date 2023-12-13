@@ -28,6 +28,6 @@ def add_technical_indicators(df):
     return df
 
 # Load data
-df = pd.read_csv('A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\historical_data.csv')
+df = pd.read_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\historical_data.csv')
 df = add_technical_indicators(df)
-df.to_csv('A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\processed_data.csv', index=False)
+df.to_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\processed_data.csv', index=False)

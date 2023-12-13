@@ -39,10 +39,10 @@ def train_model(df):
     return model
 
 # Load your dataset
-df = pd.read_csv('A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\processed_data.csv')
+df = pd.read_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\processed_data.csv')
 
 # Train the model
 model = train_model(df)
 
 # Save the trained model to a file
-joblib.dump(model, 'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\trading_model.pkl')
+joblib.dump(model, r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\strategies\trading_model.pkl')
