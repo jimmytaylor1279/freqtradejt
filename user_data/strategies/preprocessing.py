@@ -1,4 +1,5 @@
 from pandas import DataFrame
+import numpy as np
 
 def prepare_data(dataframe: DataFrame) -> DataFrame:
     """
@@ -12,6 +13,13 @@ def prepare_data(dataframe: DataFrame) -> DataFrame:
 
     # Example: Adding a simple moving average (SMA) indicator
     dataframe['sma'] = dataframe['close'].rolling(window=20).mean()
+
+    # Handle missing values (NaNs)
+    # Option 1: Fill NaNs with the mean of the column
+    dataframe.fillna(dataframe.mean(), inplace=True)
+
+    # Option 2: Drop rows with NaNs (uncomment the below line if you prefer this method)
+    # dataframe.dropna(inplace=True)
 
     # Add more features and preprocessing steps as needed
 
