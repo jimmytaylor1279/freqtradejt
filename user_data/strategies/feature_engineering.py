@@ -28,6 +28,6 @@ def add_technical_indicators(df):
     return df
 
 # Load data
-df = pd.read_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\data\BTC_USD-1m.csv')
+df = pd.read_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\data\kraken\BTC_USD-1m.csv')
 df = add_technical_indicators(df)
-df.to_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\data\processed_data.csv', index=False)
+df.to_csv(r'A:\All_FIles_and_Folders\Documents\freqtradejt\freqtrade\user_data\data\kraken\processed_data.csv', index=False)
